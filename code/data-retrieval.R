@@ -29,5 +29,17 @@ members.info = lapply(member.list$users, FUN = function(x) users.get(vk.get_data
 
 #extracting data from the city field
 students.df$city = lapply(members.info, function(x) x[[1]]$city) %>% unlist %>% as.factor
-#many might change it to 2 after moving!
+#many might change it to 2 after moving! thus:
 
+#extracting data about school's city
+for (i in 1:nrow(students.df)){
+  tryCatch({city.school[i] = tryCatch(members.info[[i]][[1]]$schools[[1]]$city, error = function(err) NA)}, error = function(err) NA)
+}
+
+#works for now
+
+students.df$city.school = city.school
+
+#Dasha solution, mihgt replace all of the upper stuff
+tmp = lapply(members.info, as.data.frame) #doesn't work yet
+tmp = plyr::rbind.fill(tmp)
