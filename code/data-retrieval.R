@@ -22,8 +22,12 @@ vk.get_data <- get.vk.connector(code = "f472f40818b1b12224")
 #DL members of 1st year students' group HSE Sociology
 members.list = groups.getMembers.plus(vk.get_data, "hsesociology2016", 0, 1000)
 
-#getting data on origin by school city
+students.df = data.frame(id = unlist(members.list$users)) #to store all we know
+
+#getting data on members to learn origin
 members.info = lapply(member.list$users, FUN = function(x) users.get(vk.get_data, as.character(x), fields = c("city,connections,schools")))
 
-#subsetting
+#extracting data from the city field
+students.df$city = lapply(members.info, function(x) x[[1]]$city) %>% unlist %>% as.factor
+#many might change it to 2 after moving!
 
