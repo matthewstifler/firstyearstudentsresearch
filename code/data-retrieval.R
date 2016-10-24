@@ -43,3 +43,8 @@ students.df$city.school = city.school
 #Dasha solution, mihgt replace all of the upper stuff
 tmp = lapply(members.info, as.data.frame) #doesn't work yet
 tmp = plyr::rbind.fill(tmp)
+
+#subset df by students who changed their city to saint petersburg
+subset.v = students.df$city.school != students.df$city
+subset.v[is.na(subset.v)] = FALSE
+students.df[subset.v & students.df$city == 2,]
