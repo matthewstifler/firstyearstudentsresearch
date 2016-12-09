@@ -36,9 +36,12 @@ community.members.cities <- lapply(community.members, function(x) {
 })
 
 #3.
-lapply(community.members, function(x) {
-  community.members.friends.raw <- lapply(x, function(y) friends.get(vk.get_data, y, "city"))
-  lapply(community.members.friends.raw, function(y) )
+community.members.friends.cities <- lapply(community.members, function(x) {
+  friends.raw <- lapply(x, function(y) friends.get(vk.get_data, as.character(y), "city"))
+  lapply(friends.raw, function(z) {
+    subset <- sapply(z, function(a) is.null(a$deactivated))
+    return(z[subset])
+  })
 })
 
 #Roadmap
