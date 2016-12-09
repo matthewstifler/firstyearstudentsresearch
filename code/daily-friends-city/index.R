@@ -36,13 +36,16 @@ community.members.cities <- lapply(community.members, function(x) {
 })
 
 #3.
+#Watch out, next line might crash sometimes when collecting data. 
+#Apparently, there is no cure, but to rerun it. Have to consider it in the final script!
 community.members.friends.cities <- lapply(community.members, function(x) {
-  friends.raw <- lapply(x, function(y) friends.get(vk.get_data, as.character(y), "city"))
-  lapply(friends.raw, function(z) {
-    subset <- sapply(z, function(a) is.null(a$deactivated))
-    return(z[subset])
-  })
+  lapply(x, function(y) friends.get(vk.get_data, as.character(y), "city"))
 })
+community.members.friends.cities <- lapply(community.members.friends.cities, function(z) {
+  subset <- sapply(z, function(a) is.null(a$deactivated))
+  return(z[unlist(subset)])
+})
+
 
 #Roadmap
 #1. Get all sample IDs
@@ -58,3 +61,10 @@ community.members.friends.cities <- lapply(community.members, function(x) {
 
 #Optional goals
 #1.Rewrite VK functions so that they don't do two requests when there is need of a count (result.count)
+
+#----------Fun stuff that might be useful----------
+
+#How many people collected overall
+sapply(community.members.friends.cities, function(x) sapply(x, length)) %>% sapply(., sum) %>% sum()
+#Average number of friends for each faculty
+(sapply(community.members.friends.cities, function(x) sapply(x, length)) %>% sapply(., sum)) / sapply(community.members.cities, length)
