@@ -46,7 +46,7 @@ raw.spbu <- paste0("https://api.vk.com/method/", "users.search",
        "&university=", "1",
        "&school_year=", "2016",
        "&count=", "1000",
-       "&fields=", "education,universities,schools") %>% 
+       "&fields=", "education,schools") %>% 
   GET() %>% 
   content(as = "parsed") %>%
   .$response
@@ -54,6 +54,41 @@ raw.spbu <- paste0("https://api.vk.com/method/", "users.search",
 lapply(raw.spbu[-1], as.data.frame) %>% rbind.fill %>% .$schools.city %>% as.factor %>% summary() 
 #15% def from out of city, ca. 29% -- def. from the city, 55% didn't state
 #thus, final sample on non-locals should be ca. 3650, and ca. 7475 for locals
+
+students.data <- lapply(unis.selected.by.number.of.places, function(x) {
+  Sys.sleep(0.3) # VK API restrictions
+  paste0("https://api.vk.com/method/", "users.search", 
+         "?access_token=", "24f3f52000d221fb9d47c9039134fb3623108c4cf67d24dae0b772702d1b9ab6750c220e3ff7989cd3a17", 
+         "&university=", as.character(x$id),
+         "&school_year=", "2016",
+         "&count=", "50",
+         "&age_to=", "21",
+         "&fields=", "education,schools,universities") %>% 
+    GET() %>% 
+    content(as = "parsed") %>%
+    .$response %>% 
+    `[`(-1) #no count
+})
+
+#deleting people with >1 university
+subset.list <- sapply(students.data, function(x) sapply(x, function(y) length(y$universities) > 1))
+
+for (i in 1:length(students.data)) {
+  students.data[[i]] <- students.data[[i]][!subset.list[[i]]]
+}
+
+#problem of people with more than 1 school
+#ALSO: this line can be modified to retrieve other description statistics
+sapply(students.data, 
+       function(x) { #take each university 
+         sapply(x, function(y) { #take each person
+           y$schools[[length(y$schools)]]$year_graduated #get graduation year for the last (length(y$schools)) school
+           })
+         }) %>%
+  unlist %>%
+  as.factor %>%
+  summary
+#those who graduated from their last school earlier than 2016 are just 4% of those who mention schools (32%), and 1.2% of the entire sample, so we can 
 
 
 
