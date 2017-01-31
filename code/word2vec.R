@@ -49,4 +49,4 @@ posts.df <- lapply(students.with.schools.posts, function(x) {
   }) %>% rbind.fill() 
 }) %>% rbind.fill()
 
-sapply(posts.df$id, function(x) )
+posts.df$city <- sapply(posts.df$id, function(x) students.ids.cities.df[students.ids.cities.df$id %in% x,2])
