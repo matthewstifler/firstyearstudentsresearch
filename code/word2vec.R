@@ -33,7 +33,7 @@ students.with.schools.walls <- lapply(students.walls, function(x) {
   })
 })
 
-lapply(students.with.schools.walls, function(x) {
+students.with.schools.posts <- lapply(students.with.schools.walls, function(x) {
   lapply(x, function(y) {
     if (length(y) > 0) { #if we picked this wall, unpicked walls are left as elements with length 0 (WHY)
       lapply(y, function(z) {
@@ -42,3 +42,11 @@ lapply(students.with.schools.walls, function(x) {
     }
   })
 })
+
+posts.df <- lapply(students.with.schools.posts, function(x) {
+  lapply(x, function(y) {
+    y %>% lapply(as.data.frame) %>% rbind.fill
+  }) %>% rbind.fill() 
+}) %>% rbind.fill()
+
+sapply(posts.df$id, function(x) )
