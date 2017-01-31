@@ -61,7 +61,7 @@ students.data <- lapply(unis.selected.by.number.of.places, function(x) {
          "?access_token=", "24f3f52000d221fb9d47c9039134fb3623108c4cf67d24dae0b772702d1b9ab6750c220e3ff7989cd3a17", 
          "&university=", as.character(x$id),
          "&school_year=", "2016",
-         "&count=", "50",
+         "&count=", "1000",
          "&age_to=", "21",
          "&fields=", "education,schools,universities") %>% 
     GET() %>% 
@@ -90,6 +90,8 @@ sapply(students.data,
   summary
 #those who graduated from their last school earlier than 2016 are just 4% of those who mention schools (32%), and 1.2% of the entire sample, so we can 
 
+#faulty df, but still something
+students.data %>% lapply(function(x) x  %>% lapply(as.data.frame) %>% rbind.fill)  %>% rbind.fill()  %>% dim()
 
 
 #TODO
