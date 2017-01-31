@@ -61,7 +61,11 @@ students.data <- lapply(unis.selected.by.number.of.places, function(x) {
          "?access_token=", "24f3f52000d221fb9d47c9039134fb3623108c4cf67d24dae0b772702d1b9ab6750c220e3ff7989cd3a17", 
          "&university=", as.character(x$id),
          "&school_year=", "2016",
+<<<<<<< HEAD
          "&count=", "1000",
+=======
+         "&count=", "50",
+>>>>>>> 36d97c43e442beff7b51a2deff76020ec09481d4
          "&age_to=", "21",
          "&fields=", "education,schools,universities") %>% 
     GET() %>% 
@@ -69,6 +73,17 @@ students.data <- lapply(unis.selected.by.number.of.places, function(x) {
     .$response %>% 
     `[`(-1) #no count
 })
+<<<<<<< HEAD
+=======
+
+#deleting people with >1 university
+subset.list <- sapply(students.data, function(x) sapply(x, function(y) length(y$universities) > 1))
+
+for (i in 1:length(students.data)) {
+  students.data[[i]] <- students.data[[i]][!subset.list[[i]]]
+}
+
+>>>>>>> 36d97c43e442beff7b51a2deff76020ec09481d4
 
 #deleting people with >1 university
 subset.list <- sapply(students.data, function(x) sapply(x, function(y) length(y$universities) > 1))
