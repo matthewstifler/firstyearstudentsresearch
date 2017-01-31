@@ -94,13 +94,26 @@ sapply(students.data,
 students.data %>% lapply(function(x) x  %>% lapply(as.data.frame) %>% rbind.fill)  %>% rbind.fill()  %>% dim()
 
 #pick ids of those, who have schools
-students.with.shools.ids <- sapply(students.data, 
+students.with.schools.ids <- sapply(students.data, 
        function(x) { #take each university 
          sapply(x, function(y) { #take each person
            if(length(y$schools) > 0) {return(y$uid)}
          })
        }) %>%
   unlist
+
+students.with.schools.ids.cities <- sapply(students.data, 
+                                           function(x) { #take each university 
+                                             sapply(x, function(y) { #take each person
+                                               if(length(y$schools) > 0) {return(list(id = y$uid, city = y$schools[[length(y$schools)]]$city))}
+                                             })
+                                           })
+                                             
+students.ids.cities.df <- lapply(students.with.schools.ids.cities, function(x) {
+  lapply(x, function(y) {
+    y %>% lapply(as.data.frame) %>% rbind.fill
+  }) %>% rbind.fill() 
+}) %>% rbind.fill()
 
 #TODO
 #0. Outsource all the functions definitions in a separate file, from all the scripts
