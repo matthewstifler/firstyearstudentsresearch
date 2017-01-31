@@ -126,7 +126,7 @@ students.with.schools.ids.cities <- sapply(students.data,
                                              
 students.ids.cities.df <- lapply(students.with.schools.ids.cities, function(x) {
   lapply(x, function(y) {
-    y %>% lapply(as.data.frame) %>% rbind.fill
+    y %>% as.data.frame %>% rbind.fill
   }) %>% rbind.fill() 
 }) %>% rbind.fill()
 
