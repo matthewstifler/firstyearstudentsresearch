@@ -93,6 +93,14 @@ sapply(students.data,
 #faulty df, but still something
 students.data %>% lapply(function(x) x  %>% lapply(as.data.frame) %>% rbind.fill)  %>% rbind.fill()  %>% dim()
 
+#pick ids of those, who have schools
+students.with.shools.ids <- sapply(students.data, 
+       function(x) { #take each university 
+         sapply(x, function(y) { #take each person
+           if(length(y$schools) > 0) {return(y$uid)}
+         })
+       }) %>%
+  unlist
 
 #TODO
 #0. Outsource all the functions definitions in a separate file, from all the scripts

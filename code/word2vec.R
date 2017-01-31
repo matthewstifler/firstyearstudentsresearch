@@ -24,4 +24,21 @@ students.walls <- lapply(students.ids, function(x)
       })
   )
 
-#jesus, I had to subset in before, obviously
+#jesus, I had to subset it before, obviously
+students.with.schools.walls <- lapply(students.walls, function(x) {
+  lapply(x, function(y) {
+    if(length(y) > 0) { #if there is at least one post
+      if(y[[1]]$from_id %in% students.with.shools.ids) return(y) #if the id is in list, return wall 
+    }
+  })
+})
+
+lapply(students.with.schools.walls, function(x) {
+  lapply(x, function(y) {
+    if (length(y) > 0) { #if we picked this wall, unpicked walls are left as elements with length 0 (WHY)
+      lapply(y, function(z) {
+        return(list(text = z$text, id = z$to_id))
+      }) 
+    }
+  })
+})
