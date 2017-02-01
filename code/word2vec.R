@@ -1,5 +1,7 @@
+require(dplyr)
+require(stringr)
 require(devtools)
-install_github("bmschmidt/wordVectors")
+#install_github("bmschmidt/wordVectors")
 require(wordVectors)
 
 #downloading data
@@ -99,3 +101,24 @@ compare.text2kw <- function (text, vspace, kwvector, stopwords, average=TRUE) {
   }
 }
 
+#processing posts to make them compatible with the model
+posts.df.subset.edited <- posts.df.subset
+posts.df.subset.edited$text <- gsub("(https://)(\\S*)", " ", posts.df.subset.edited$text) %>% 
+  gsub("ё", "е", .) %>%
+  gsub("Ё", "Е", .) %>%
+  gsub("[^А-Яа-я]", " ", .) %>%
+  str_to_lower() %>% 
+  trimws() %>%
+  gsub("\\s{2,}", " ", .) #remove 2+ spaces
+
+writeLines(posts.df.subset.edited$text, "data/posts-vec")
+system("mystem -cldi data/posts-vec data/posts-vec-mystem")
+text.processed <- readLines("data/posts-vec-mystem")
+text.processed <- text.processed %>% 
+  str_extract_all("\\{[А-Яа-я]*\\??=[A-Za-z]*") %>%
+  sapply(paste, collapse = " ") %>%
+  gsub("\\{", "", .) %>%
+  gsub("=", "_", .) %>%
+  gsub("\\?", "", .)
+
+posts.df.subset.edited$text <- text.processed
