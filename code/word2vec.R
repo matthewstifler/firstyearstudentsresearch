@@ -1,5 +1,6 @@
 require(devtools)
 install_github("bmschmidt/wordVectors")
+require(wordVectors)
 
 #downloading data
 students.ids <- students.data %>%
@@ -65,4 +66,36 @@ posts.df <- lapply(students.with.schools.posts, function(x) {
 posts.df$city <- sapply(posts.df$id, 
                         function(x) students.ids.cities.df[students.ids.cities.df$id %in% x, 2]) %>% 
   as.factor()
+
+posts.df$is.local <- posts.df$city == "2"
+posts.df$text <- posts.df$text %>% as.character()
+
+#ISSUE: 100 last posts give questionable distribution, increasing greatly towards 2017
+#let's see how the dates of the first post are distributed
+first.post.dates <- by(posts.df, posts.df$id, function(x) x$date %>% `[`(length(x$date)), simplify = T)  %>% as.numeric()
+
+#for how many first post was after finishing school?
+#!st June
+(first.post.dates > 1464739200) %>% summary #18%! :(
+#???
+#1st September
+(first.post.dates > 1472688000) %>% summary #11%! :(
+
+
+posts.df.subset <- posts.df[posts.df$date > 1464739200,] #only posts after 1st June 2016
+
+#----------working with text----------
+model  <- read.vectors("data/web.model.bin")
+
+compare.text2kw <- function (text, vspace, kwvector, stopwords, average=TRUE) {
+  words <- unlist(strsplit(text, " "))
+  words <- words[!words %in% stopwords]
+  words <- words[words %in% rownames(vspace)]
+  
+  if (length(words)>0) {
+    return(as.vector(wordVectors::cosineSimilarity(vspace[[words, average=average]], kwvector)))
+  } else {
+    return(NA)
+  }
+}
 
