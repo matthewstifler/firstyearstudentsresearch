@@ -25,6 +25,7 @@ students.walls <- lapply(students.ids, function(x)
   )
 
 #jesus, I had to subset it before, obviously
+#subsetting walls by thise who have schools in their profiles
 students.with.schools.walls <- lapply(students.walls, function(x) {
   lapply(x, function(y) {
     if(length(y) > 0) { #if there is at least one post
@@ -33,6 +34,7 @@ students.with.schools.walls <- lapply(students.walls, function(x) {
   })
 })
 
+#building post-id list
 students.with.schools.posts <- lapply(students.with.schools.walls, function(x) {
   lapply(x, function(y) {
     if (length(y) > 0) { #if we picked this wall, unpicked walls are left as elements with length 0 (WHY)
@@ -43,10 +45,14 @@ students.with.schools.posts <- lapply(students.with.schools.walls, function(x) {
   })
 })
 
+#unfolding post-id list into a data frame
 posts.df <- lapply(students.with.schools.posts, function(x) {
   lapply(x, function(y) {
     y %>% lapply(as.data.frame) %>% rbind.fill
   }) %>% rbind.fill() 
 }) %>% rbind.fill()
 
-posts.df$city <- sapply(posts.df$id, function(x) students.ids.cities.df[students.ids.cities.df$id %in% x,2])
+#adding city variable to the posts.df (look up every id from posts.df in a id-city df, built previously from data on students)
+posts.df$city <- sapply(posts.df$id, 
+                        function(x) students.ids.cities.df[students.ids.cities.df$id %in% x, 2]) %>% 
+  as.factor()
