@@ -34,12 +34,21 @@ students.with.schools.walls <- lapply(students.walls, function(x) {
   })
 })
 
+#let's see how many there are copy posts from our sample
+students.with.schools.walls %>% sapply(function(x) sapply(x, function(y) sapply(y, function(z) z$post_type))) %>% unlist %>% as.factor() %>% summary() #61.6% of copy posts!
+
+
 #building post-id list
 students.with.schools.posts <- lapply(students.with.schools.walls, function(x) {
   lapply(x, function(y) {
     if (length(y) > 0) { #if we picked this wall, unpicked walls are left as elements with length 0 (WHY)
       lapply(y, function(z) {
-        return(list(text = z$text, id = z$to_id))
+        return(
+          list(text = z$text,
+               id = z$to_id,
+               type = z$post_type,
+               date = z$date,
+               coord = ifelse(is.null(z$geo$coordinates), NA, z$geo$coordinates)))
       }) 
     }
   })
@@ -56,3 +65,4 @@ posts.df <- lapply(students.with.schools.posts, function(x) {
 posts.df$city <- sapply(posts.df$id, 
                         function(x) students.ids.cities.df[students.ids.cities.df$id %in% x, 2]) %>% 
   as.factor()
+
