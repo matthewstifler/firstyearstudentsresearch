@@ -101,7 +101,7 @@ compare.text2kw <- function (text, vspace, kwvector, stopwords, average=TRUE) {
   }
 }
 
-#processing posts to make them compatible with the model
+#----------preprocessing posts to make them compatible with the model----------
 posts.df.subset.edited <- posts.df.subset
 posts.df.subset.edited$text <- gsub("(https://)(\\S*)", " ", posts.df.subset.edited$text) %>% 
   gsub("ё", "е", .) %>%
@@ -121,4 +121,10 @@ text.processed <- text.processed %>%
   gsub("=", "_", .) %>%
   gsub("\\?", "", .)
 
-posts.df.subset.edited$text <- text.processed
+posts.df.subset.edited$text <- text.processed #yay!
+
+test.vector <- c("питер_S", "питерский_A", "питерец_S", "питерка_S", "питербург_S", "петербург_S", "санктпетербург_S", "петербургский_A", "санктпетербургский_A", "спб_S" )
+similarity <- sapply(posts.df.subset.edited$text, function(x){
+  compare.text2kw(x, model, model[[test.vector]], stopwords = c())
+})
+
