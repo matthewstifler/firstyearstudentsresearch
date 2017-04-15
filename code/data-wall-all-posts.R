@@ -11,8 +11,6 @@ july.first <- 1467320400
 
 #----------Function declaration-----------
 
-
-
 #wrapper function for the recursion
 wall.get.posts.since.date <- function(id, date) { #returns a list of all posts till specified date
   count <- content(GET(paste0("https://api.vk.com/method/", "wall.get", 
@@ -22,6 +20,8 @@ wall.get.posts.since.date <- function(id, date) { #returns a list of all posts t
                               "&count=", "1")), as = "parsed")$response[[1]]
   counter <- 1
   
+  #function has to be defined in the wrapper function's body, unlike JS, since the environment thing:
+  #function "remembers" environment, where it was defined
   wall.get.posts.recursive <- function(id, date, data) {
     current.data <- content(GET(paste0("https://api.vk.com/method/", "wall.get", #get a batch and store it in according slots
                                        "?access_token=", "24f3f52000d221fb9d47c9039134fb3623108c4cf67d24dae0b772702d1b9ab6750c220e3ff7989cd3a17", 
@@ -31,12 +31,14 @@ wall.get.posts.since.date <- function(id, date) { #returns a list of all posts t
                                        "&count=", "100")), as = "parsed")$response[-1] #no 'count' field
     
     #if pinned post is earlier than date, it has to be excluded, otherwise the terminating condition will fire prematurely
-    if (counter == 1 & !is.null(current.data[[1]]$is_pinned)) {
-      if (current.data[[1]]$date < date) {
-        current.data <- current.data[-1]
+    if (length(current.data) > 0) {
+      if (counter == 1 & !is.null(current.data[[1]]$is_pinned)) {
+        if (current.data[[1]]$date < date) {
+          current.data <- current.data[-1]
+        }
       }
     }
-    
+
     data.dates <- sapply(current.data, function(x) x$date)
     
     #terminating condition
@@ -51,7 +53,18 @@ wall.get.posts.since.date <- function(id, date) { #returns a list of all posts t
       return(wall.get.posts.recursive(id, date, data))
     }
   }
-  
-  return(wall.get.posts.recursive(id, date, list()))
+  if (count > 0)
+    return(wall.get.posts.recursive(id, date, list()))
+  else
+    return(list())
 }
+#--------------------
 
+students.walls.v2 <- list()
+
+for (i in 1:length(students.with.shools.ids)) {
+  print(Sys.time())
+  print(i)
+  students.walls.v2[[i]] <- wall.get.posts.since.date(students.with.shools.ids[i], july.first)
+  gc()
+}
