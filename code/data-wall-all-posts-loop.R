@@ -38,11 +38,11 @@ for (i in 1:length(students.with.shools.ids)) {
         
         if (any(data.dates < july.first) || j == (count %/% 100)) {
           current.data <- current.data[!(data.dates < july.first)] #subset to only those after the date
-          students.walls.v2[[i]][((j - 1)*100 + 1):((j - 1)*100 + length(current.data))] <- ifelse(length(current.data) > 0, current.data, list())
+          students.walls.v2[[i]][((j - 1)*100 + 1):((j - 1)*100 + length(current.data))] <- current.data
           break
         }
         else {
-          students.walls.v2[[i]][((j - 1)*100 + 1):((j - 1)*100 + length(current.data))] <- ifelse(length(current.data) > 0, current.data, list())
+          students.walls.v2[[i]][((j - 1)*100 + 1):((j - 1)*100 + length(current.data))] <- current.data
         }
       } 
     }
