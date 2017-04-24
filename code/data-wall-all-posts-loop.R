@@ -1,7 +1,9 @@
+require(httr)
+
 july.first <- 1467320400
 students.walls.v2 <- list()
 
-for (i in 1:length(students.with.shools.ids)) {
+for (i in i:length(students.with.shools.ids)) {
   Sys.sleep(1)
   message(Sys.time())
   message(paste0("Profile number ", i, " is being processed"))
@@ -38,7 +40,9 @@ for (i in 1:length(students.with.shools.ids)) {
         
         if (any(data.dates < july.first) || j == (count %/% 100)) {
           current.data <- current.data[!(data.dates < july.first)] #subset to only those after the date
-          students.walls.v2[[i]][((j - 1)*100 + 1):((j - 1)*100 + length(current.data))] <- current.data
+          if (length(current.data) > 0) {
+            students.walls.v2[[i]][((j - 1)*100 + 1):((j - 1)*100 + length(current.data))] <- current.data 
+          }
           break
         }
         else {

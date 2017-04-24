@@ -42,17 +42,18 @@ wall.get.posts.since.date <- function(id, date) { #returns a list of all posts t
     data.dates <- sapply(current.data, function(x) x$date)
     
     #terminating condition
-    if (any(data.dates < date) || counter == count / 100) {
+    if (any(data.dates < date) || counter == count %/% 100) {
       current.data <- current.data[!(data.dates < date)] #subset to only those after the date
-      data[((counter - 1)*100 + 1):((counter - 1)*100 + length(current.data))] <- current.data
+      data[((counter - 1)*100 + 1):((counter - 1)*100 + length(current.data))] <- ifelse(length(current.data) > 0, current.data, list())
       return(data)
     }
     else {
-      data[((counter - 1)*100 + 1):((counter - 1)*100 + length(current.data))] <- current.data
+      data[((counter - 1)*100 + 1):((counter - 1)*100 + length(current.data))] <- ifelse(length(current.data) > 0, current.data, list())
       counter <<- counter + 1
       return(wall.get.posts.recursive(id, date, data))
     }
   }
+  
   if (count > 0)
     return(wall.get.posts.recursive(id, date, list()))
   else
@@ -62,9 +63,12 @@ wall.get.posts.since.date <- function(id, date) { #returns a list of all posts t
 
 students.walls.v2 <- list()
 
+#it doesn't work anyway, so run on local machines with increased C stack. (`ulimit -s`)
 for (i in 1:length(students.with.shools.ids)) {
   print(Sys.time())
   print(i)
   students.walls.v2[[i]] <- wall.get.posts.since.date(students.with.shools.ids[i], july.first)
-  gc()
+  gc() 
 }
+
+#seems like recursion will have to be replaced with good ol'loops
