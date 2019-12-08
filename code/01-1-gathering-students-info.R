@@ -9,7 +9,7 @@ require(httr)
 
 #Getting id and name for all universities in Saint Petersburg
 unis.spb <- paste0("https://api.vk.com/method/", "database.getUniversities", 
-                   "?access_token=", "24f3f52000d221fb9d47c9039134fb3623108c4cf67d24dae0b772702d1b9ab6750c220e3ff7989cd3a17", 
+                   "?access_token=", "", 
                   "&q=", "",
                   "&country=", 1,
                   "&city_id=", 2,
@@ -30,7 +30,7 @@ unis.spb <- unis.spb[c(1, 51, 45, 63, 48, 30, 55, 3, 61, 44, 27, 12, 56, 60, 50,
 students.data <- lapply(unis.spb, function(x) {
   Sys.sleep(0.3) # VK API restrictions
   paste0("https://api.vk.com/method/", "users.search", 
-         "?access_token=", "24f3f52000d221fb9d47c9039134fb3623108c4cf67d24dae0b772702d1b9ab6750c220e3ff7989cd3a17", 
+         "?access_token=", "", 
          "&university=", as.character(x$id),
          "&school_year=", "2016",
          "&count=", "1000",
@@ -65,7 +65,7 @@ students.ids.cities.df <- sapply(students.data, function(x) {
 students.ids.cities.df <- lapply(students.ids.cities.df$user.id, function(x){
   Sys.sleep(1)
   user.data <- content(GET(paste0("https://api.vk.com/method/", "users.get", 
-                                  "?access_token=", "24f3f52000d221fb9d47c9039134fb3623108c4cf67d24dae0b772702d1b9ab6750c220e3ff7989cd3a17", 
+                                  "?access_token=", "", 
                                   "&user_ids=", as.character(x),
                                   "&fields=", "sex,bdate,country")), as = "parsed")$response
   message(paste0("Processing user ", x))
