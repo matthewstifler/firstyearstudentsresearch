@@ -18,7 +18,7 @@ for (i in i:length(students.with.shools.ids)) {
   students.walls.v2[[i]] <- list()
   
   count <- content(GET(paste0("https://api.vk.com/method/", "wall.get", 
-                              "?access_token=", "24f3f52000d221fb9d47c9039134fb3623108c4cf67d24dae0b772702d1b9ab6750c220e3ff7989cd3a17", 
+                              "?access_token=", "", 
                               "&owner_id=", as.character(students.with.shools.ids[i]),
                               "&filter=", "owner",
                               "&count=", "1")), as = "parsed")$response[[1]]
@@ -29,7 +29,7 @@ for (i in i:length(students.with.shools.ids)) {
         Sys.sleep(1)
         current.data <- list()
         current.data <- content(GET(paste0("https://api.vk.com/method/", "wall.get", #get a batch and store it in according slots
-                                           "?access_token=", "24f3f52000d221fb9d47c9039134fb3623108c4cf67d24dae0b772702d1b9ab6750c220e3ff7989cd3a17", 
+                                           "?access_token=", "", 
                                            "&owner_id=", as.character(students.with.shools.ids[i]),
                                            "&filter=", "owner",
                                            "&offset=", ((j - 1) * 100),
